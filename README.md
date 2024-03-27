@@ -7,7 +7,7 @@
 - 만일 JS로 작업할 경우 직접 createElemente 함수를 사용해야 합니다.
 - 앞으로 설명하는 코드를 보면 알 수 있지만 결국 JSX 는 가독성을 높여 주는 역할을 합니다.
 
-```JS
+```JSx
 class Hello extends React.Component{
   render(){
     return <div>Hello{this.props.toWhat}</div> // JSX 사용
@@ -23,10 +23,10 @@ ReactDOM.render(
 - 코드가 간결해 집니다.
 - 가독성이 향상 됩니다.
 - Injection Attack 이라 불리는 해킹 방법을 방어함으로써 보안에 강합니다.
-```html
-<div>Hello, {name}</div> <!-- JSX 사용-->
+```jsx
+<div>Hello, {name} </div> // JSX 사용
 ```
-```js
+```jsx
 React.createElement('div',null,'hello') // JSX 미사용
 ```
 
@@ -35,7 +35,7 @@ React.createElement('div',null,'hello') // JSX 미사용
 - 자바 스크립트 문법에 XML과 HTML을 섞어서 사용합니다.
 - 아래 코드의 2번 라인처럼 섞어서 사용하는 것입니다.
 - 만일 html이나 xml에 자바 스크립트 코드를 사용하고 싶으면 {}괄호를 사용합니다.
-```js
+```jsx
 const name = '호진';
 const element = <h1>안녕, {name}</h1>;
 
@@ -45,11 +45,144 @@ ReactDOM.render{
 }
 ```
 - 만일 태그의 속성값을 넣고 싶을 때는 다음과 같이 합니다.
-```js
+```jsx
 const element = <div tabIndex = "0"></div>; // 큰 따옴표 사이에 문자열을 넣거나,
 
 const element = <img src ={user.avatarUrl}></img>; // 중괄호 사이에 자바 스크립트 코드를 넣으면 됨!
 ```
+- 함수형 컴포넌트
+``` jsx
+root.render(
+  <React.StrictMode>
+    <Library/> //결과를 보고 싶으면 수정하기 Library에 book을 import했기 때문에 Library 사용
+  </React.StrictMode>
+);
+
+import React from "react";
+
+export default function Book(props) { //export default는 앞에 쓰는 게 트랜드, props는 생략 가능
+    return (
+        <div>
+            <h1>{`이 책의 이름은 ${props.name}입니다.`}</h1>
+            <h1>{`이 책은 총 ${props.numOfPage}페이지로 이뤄져 있습니다.`}</h1>
+        </div>
+    );
+}
+
+import React from "react";
+import Book from "./Book";
+
+export default function Library(props) { 
+    return(
+        <div>
+            <Book name = '처음 만난 파이썬' numOfPage={300} />
+            <Book name = '처음 만난 AWS' numOfPage={400} />
+            <Book name = '처음 만난 리액트' numOfPage={500} />
+        </div>
+    );
+}   
+```
+
+
+### 4.1 엘리먼트에 대해 알아보기
+#### 1. 엘리먼트의 정의
+- 엘리먼트는 리액트 앱을 구성하는 요소를 의미합니다.
+- 공식 페이지에는 "엘리먼트는 리액트 앱의 가장 작은 빌딩 블록들" 이라고 설명하고 있습니다.
+- 웹사이트의 경우는 DOM 엘리먼트이며 HTML 요소를 의미합니다.
+
+그렇다면 리액트 엘리먼트와 DOM엘리먼트는 어떤 차이가 있을까요?
+- 리액트 엘리먼트는 Virtual DOM의 형태를 취하고 있습니다.
+- DOM 엘리먼트는 페이지의 모든 정보를 갖고 있어 무겁습니다.
+- 반면 리액트 엘리먼트는 변화한 부분만 가지고 있어 가볍습니다.
+
+||DOM|Virtual DOM|
+|-|-|-|
+|**업데이트 속도**|느리다|빠르다|
+|**element 업데이트 방식**|DOM 전체를 업데이트|변화 부분을 가상DOM으로 만든 후 DOM과 비교하여 다른 부분만 업데이트|
+|**메모리**| 낭비가 심함 |효율적|
+
+#### 2. 엘리먼트의 생김새
+- 리액트 엘리먼트는 자바스크립트 객체의 형태로 존재합니다.
+- 컴포넌트(Button 등), 속성(color 등) 및 내부의 모든 children을 포함하는 일반 JS객체 입니다.
+- 이 객체는 마음대로 변경할 수 없는 불변성을 갖고 있습니다.
+
+리액트 엘리먼트의 예를 보면 type 태그 대신 리액트 컴포넌트가 들어가 있는 것 외에는 차이가 없다는 것을 알 수 있습니다.  
+역시 자바 스크립트 객체입니다.
+```JSX
+{
+  type: Button,
+  props:{
+    color: 'green', children: 'Hello, element!'
+  }
+}
+```
+다음 코드는 Button 과 ConfirmDialog 컴포넌트고 ConfirmDialog가 Button 을 포함하고 있습니다.
+``` jsx
+function Button(props) {
+    return (
+        <button className={`bg-${props.color}`}>
+        <b>
+        {props.children}
+        </b>
+        </button>
+    )
+}
+
+function ConfirmDialog(props){
+  return(
+    <div>
+    <p> 내용을 확인하셨으면 버튼을 눌러주세요.</p>
+    <Button color = 'green'>확인</Button>
+    </div>
+  )
+}
+```
+#### 3. 엘리먼트의 특징
+리액트 엘리먼트의 가장 큰 특징은 불변성입니다. 즉. 한 번 생성된 엘리먼트의 children이나 속성을 바꿀 수 없습니다. 
+만일 내용이 바뀌면 어떻게 해야 할까요?
+
+- 이 때는 컴포넌트를 통해 새로운 엘리먼트를 생성하면 됩니다.
+- 그 다음 이전 엘리먼트와 교체를 하는 방법으로 내용을 바꾸는 것입니다.
+- 이렇게 교체하는 작업을 하기 위해 virtual DOM을 사용합니다.
+
+#### 4. 엘리먼트 렌더링하기
+Root DOM node  
+다음 html 코드는 id 값이 root 인 div 태그로 단순하지만 리액트에 필수로 들어가는 아주 중요한 코드 입니다. 이 div 태그 안에 리액트 엘리먼트가 렌더링 되며, 이 것을 Root DOM node 라고 합니다.
+```jsx
+<div id = 'root'></div>
+```
+엘리먼트를 렌더링하기 위해서는 다음과 같은 코드가 필요합니더ㅏ.
+```jsx
+const element = <h1>안녕, 리액트!</h1>;
+ReactDOM.render(element, document.getElementById('root'));
+```
+
+#### 4.2 렌더링된 엘리먼트 업데이트 하기
+- 다음 코드는 tick() 함수를 정의하고 있습니다.
+- 이 함수는 현재 시간을 포함한 element 를 생성해서 root div에 렌더링 해줍니다.
+- 그런데 라인 12를 보면 setInterval()함수를 이용해서 위에서 정의한 tick()을 1초에 한 번씩 호출하고 있습니다.
+- 결국  1초에 한 번씩 element를 새로 만들고 그것을 교체하는 것입니다.
+- 다음 코드를 실행하고, 크롬 개발자도구에서 확인해 보면 시간 부분만 업데이트 되는 것을 확인할 수 있습니다.
+
+```jsx
+function tick(){
+  const element = (
+    <div>
+    <h1>안녕, 리액트!</h1>
+    <h2>현재시간:{new Date().toLocaleTimeString()}</h2>
+    </div>
+  );
+
+  ReactDOM.render(element, document.getElementById('root'));
+}
+
+setInterval(tick, 1000);
+```
+
+
+
+
+
 
 ## 3월 20일 강의
 ### 1. 리액트는 무엇인가?
