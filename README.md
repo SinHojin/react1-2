@@ -1,5 +1,170 @@
 # 신호진 202030217
 
+## 4월 3일 강의
+3. Props 사용법
+- JSX 에서는 key-value 쌍으로 props 를 구성합니다.
+```JSX
+function App(props){
+  return(
+    <Profile name = "소플"
+    introduction = "안녕하세요, 소플입니다." 
+    viewCount={1500}
+    />
+  );
+}
+```
+위의 코드는  
+1.Profile 컴포넌트로 전달해서 name,introduction, viewCount에 각각 속성을 할당하는,  
+2.이때 전달되는 props 는 다음과 같은 자바스크립트 객체입니다.
+```jSX
+{
+  name: "소플",
+  introduction: "안녕하세요, 소플입니다.",
+  viewCount: 1500
+}
+```
+- JSX에서는 중괄호를 사용하면 JS코드를 넣을 수 있다고 배웠습니다.
+- 다음 코드처럼 props를 통해서 value 를 할당 할 수도 있고, 직접 중괄호를 사용하여 할당할 수도 있습니다.
+```JSX
+function App(props){
+  return(
+    <Layout
+      width={2560}
+      height={1440}
+      header={
+        <Header title="소플의 블로그입니다."/>
+      }
+      footer={
+        <Footer />
+      }
+    />
+  )
+}
+```
+- JSX를 사용하지 않는 경우 props의 전달 방법은 createElement()함수를 사용하는 것입니다.
+
+### 5.3 컴포넌트 만들기
+1. 컴포넌트의 종류
+- 리액트 초기 버전을 사용할 때는 클래스형 컴포넌트를 주로 사용했습니다.
+- 이후 Hook 이라는 개념이 나오면서 최근에는 함수형 컴포넌트를 주로 사용합니다.
+- 예전에 작성된 코드나 문서들이 클래스형 컴포넌트를 사용하고 있기 때문에,
+- 클래스형 컴포넌트와 컴포넌트의 생명주기에 관해서도 공부해 두어야 합니다.
+
+2. 함수형 컴포넌트
+- Welcome 컴포넌트는 props를 받아, 받은 props 중 name 키의 값을 "안녕," 뒤에 넣어 반환합니다.
+
+```JSX
+function Welcome(props){
+  return <h1>안녕, {props.name}</h1>;
+}
+```
+
+3. 클래스형 컴포넌트
+- Welcome 컴포넌트는 React.Component class로 부터 상속을 받아 선언합니다.
+```JSX
+class Welcome extends React.Component{
+  render(){
+    return <h1>안녕, {this.props.name}</h1>;
+  }
+}
+```
+4. 컴포넌트 이름 짓기
+- 이름은 항상 대문자로 시작합니다.
+- 왜냐하면 리액트는 소문자로 시작하는 컴포넌트를 DOM 태그로 인식하기 때문입니다. html tag.
+- 컴포넌트 파일 이름과 컴포넌트 이름은 같게 합니다.
+
+5. 컴포넌트의 렌더링
+- 렌더링의 과정은 다음 코드와 같습니다.
+```JSX
+function Welcome(props){
+  return <h1>안녕, {props.name}</h1>;
+}
+
+const element = <Welcom name ="인제"/>;
+ReactDOM.render(
+  element,
+  document.getElementById('root')
+);
+```
+
+### 5.4 컴포넌트 합성
+- 컴포넌트 합성은 여러 개의 컴포넌트를 합쳐서 하나의 컴포넌트를 만드는 것입니다.
+- 리액트에서는 컴포넌트 안에 또 다른 컴포넌트를 사용할 수 있기 때문에, 복잡한 화면을 여러 개의 컴포넌트로 나누어 구현할 수 있습니다.
+- 다음 코드에서는 props의 값을 다르게 해서 Welcome 컴포넌트를 
+
+### 5.5 컴포넌트 추출
+- 복잡한 컴포넌트를 쪼개서 여러 개의 컴포넌트로 나눌 수도 있습니다.
+- 큰 컴포넌트에서 일부를 추출해서 새로운 컴포넌트를 만드는 것입니다.
+- 실무에서는 처음부터 1개의 컴포넌트에 하나의 기능만 사용하도록 설계하는 것이 좋습니다.
+
+- Comment 는 댓글 표시 컴포넌트 입니다.
+- 내부에는 이미지, 이름, 댓글과 작성일이 포함되어 있습니다.
+- 첫 번째로 이미지 부분을 Avatar 컴포넌트로 추출해 보겠습니다.
+
+```JSX
+function Avatar(props){
+  return(
+    <img className="avatar"
+    src ={props.user.avatarUrl}
+    alt ={props.user.name}
+    />
+  );
+}
+```
+- 두 번째로 사용자 정보 부분을 추출합니다.
+- 컴포넌트 이름은 UserInfo로 합니다. React 컴포넌트 이름은 Camel notation 을 사용합니다.
+- UserInfo 안에 Avatar 컴포넌트를 넣어서 완성시킵니다.
+```JSX
+function UserInfo(props){
+  return(
+    <div className="user-info">
+      <Avatar user={props.user}/>
+      <div className="user-info-name">
+        {props.user.name}
+      </div>
+  );
+}
+```
+
+### 5.6(실습) 댓글 컴포넌트 만들기
+- 프로젝트 디렉토리에서 /src/chapter_05 만
+
+### 6.1 state
+1. State란?
+- State는 리액트 컴포넌트의 상태를 의미합니다.
+- 상태의 의미는 정상인지 비정상인지가 아니라 컴포넌트의 데이터를 의미합니다.
+- 정확히는 컴ㅁ포넌트의 변경가능한 데이터를 의미합니다.
+- State가 변하면 다시 렌더링이 되기 때문에 렌더링과 관련된 값만 state의에 포함시켜야 합니다.
+
+2. State의 특징
+- 리액트 만의 특별한 형태가 아닌 단지 자바스크립트 객체일 뿐입니다.
+- 예의 LikeButton 은 class 컴포넌트 입니다.
+- constructor는 생성자이고 그 안에 있는 this.state가 현 컴포넌트의 state입니다.
+- 함수형에서는 useState() 라는 함수를 사용합니다.
+
+### 6.2 생명주기에 대해 알아보기
+- 생명주기는 컴포넌트의 생성 시점, 사용 시점, 종료 시점을 나타내는 것입니다.
+- constructor가 실행 되면서 컴포넌트가 생성됩니다
+- 생성 직후 componentDidMount() 함수가 호출됩니다.
+- 컴포넌트가 소멸하기 전까지 여러 번 렌더링 합니다.
+- 렌더링은 props, setState(), forceUpdate() 에 의해 상태가 변경되면 이루어집니다.
+- 그리고 렌더링이 끝나면 componentDidUpdate() 함수가 호출됩니닫.
+- 마지막으로 컴포넌트가 언마운트 되면 componentWillUnmount() 함수가 호출됩니다.
+
+```JSX
+class LikeButton extends React.Component{
+    constructor(props){
+      super(props);
+
+      this.state={
+        liked: false
+      };
+    }
+
+    ...
+}
+```
+
 ## 3월 27일 강의
 ### 1. JSX의 역할
 - JSX 는 내부적으로 XML/HTML 코드를 자바스크립트로 변환합니다.
@@ -202,12 +367,13 @@ setInterval(tick, 1000);
 - 읽기 전용입니다. 변경할 수 없다는 의미 입니다.
 - 속성이 다른 엘리먼트를 생성하려면 새로운 Props를 컴포넌트에 전달하면 됩니다.
 
+
 Pure함수 vs Impure 함수
 - Pure 함수는 인수로 받은 정보가 함수 내부에서도 변하지 않는 함수입니다.
 - Impure 함수는 인수로 받은 정보가 함수 내부에서 변하는 함수 입니다.
 ```jsx
 // Pure 함수
-// input 을 변겨오하지 않으며 같은 input 에 대해서 항상 같은 output을 리턴
+// input 을 변경하지 않으면 같은 input 에 대해서 항상 같은 output을 리턴
 function sum(a,b){
   return a + b;
 }
@@ -221,7 +387,7 @@ function withdraw(account amount){
 - 리액트 공식 문서에는 컴포넌트의 특징을 다음과 같이 설명하고 있습니다.  
 All React components must act like pure functions with respect to their props.  
 - 모든 리액트 컴포넌트는 그들의 Props 에 관해서는 Pure 함수 같은 역할을 해야 한다.
-- 다시 말해 "모든 리액트 컴포넌트는 Props 를 직접 바꿀 수 없고 //여기 작성 못함
+- 다시 말해 "모든 리액트 컴포넌트는 Props 를 직접 바꿀 수 없고  //여기 작성 못함
 #######################################################################
 
 ## 3월 20일 강의
